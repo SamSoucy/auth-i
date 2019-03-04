@@ -13,7 +13,7 @@ server.use(helmet());
 server.use(express.json());
 server.use(cors());
 
-//************Creates a user*******************
+//************Register a user*******************
 
 server.post('/api/register', (req, res) => {
     let user = req.body;
@@ -30,6 +30,25 @@ server.post('/api/register', (req, res) => {
         res.status(500).json(error);
       });
 });
+
+//************Login a user*******************
+
+server.post('/api/login', (req, res) => {
+    let { username, password } = req.body;
+  
+    Users.findBy({ username })
+      .first()
+      .then(user => {
+        if (user && bcrypt.compareSync(password, user.password)) {
+          res.status(200).json({ message: `Welcome ${user.username}! You are now logged in` });
+        } else {
+          res.status(401).json({ message: "You shall not pass!" });
+        }
+      })
+      .catch(error => {
+        res.status(500).json(error);
+      });
+  });
   
 
 
